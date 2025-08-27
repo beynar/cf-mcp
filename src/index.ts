@@ -17,3 +17,4 @@ export default createMCP({
 	version: '1.0.0',
 	tools,
 });
+
