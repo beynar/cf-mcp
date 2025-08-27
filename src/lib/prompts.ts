@@ -3,6 +3,7 @@ import { StandardSchemaV1, validateInput } from './types/standardSchema';
 import { toJsonSchema } from './utils/toJsonSchema';
 import { mcpError } from './mcp/errors';
 import { Prompt as MCPPrompt } from './mcp/spec';
+import { JsonSchema } from 'arktype';
 
 export type PromptPayload<Schema extends StandardSchemaV1 | undefined> = OmitNever<{
 	input: Schema extends StandardSchemaV1 ? StandardSchemaV1.InferOutput<Schema> : never;
@@ -55,8 +56,8 @@ export const definePrompts = (prompts: Record<string, Prompt<any, any>>) => {
 };
 
 export const definePrompt = (name: string, prompt: Prompt<any, any>) => {
-	const { properties, required } = toJsonSchema(prompt['~schema']);
-
+	const schema: JsonSchema.Object = prompt['~schema'] ? toJsonSchema(prompt['~schema']) : ({ type: 'object' } as JsonSchema.Object);
+	const { properties, required } = schema;
 	return {
 		name,
 		description: prompt['~description'],
@@ -64,7 +65,7 @@ export const definePrompt = (name: string, prompt: Prompt<any, any>) => {
 			const isRequired = required?.some((r) => r === key);
 			return {
 				name: key,
-				description: value.description ?? '',
+				description: (value as any).description ?? '',
 				required: isRequired ?? false,
 			};
 		}),

@@ -21,9 +21,27 @@ export const createMCP = (server: MCPServer) => {
 			}
 
 			const sessionId = request.headers.get('Mcp-Session-Id') || crypto.randomUUID();
-			const body = (await request.json()) as RPCRequest | RPCRequest[];
+			let body: RPCRequest | RPCRequest[];
+
+			try {
+				body = (await request.json()) as RPCRequest | RPCRequest[];
+			} catch {
+				const error = mcpError('PARSE_ERROR');
+				return new Response(
+					JSON.stringify({
+						jsonrpc: '2.0',
+						id: null,
+						error: {
+							code: error['~code'],
+							message: error['~message'],
+							data: error['~data'],
+						},
+					}),
+					{ headers: { 'Content-Type': 'application/json', 'Mcp-Session-Id': sessionId }, status: 400 }
+				);
+			}
 			const isBatchRequest = isBatch(body);
-			let requests = isBatchRequest ? body : ([body] as RPCRequest[]);
+			let requests = (isBatchRequest ? body : [body]) as RPCRequest[];
 
 			const handler = new MCPHandler(server, sessionId);
 			const results = await Promise.all(

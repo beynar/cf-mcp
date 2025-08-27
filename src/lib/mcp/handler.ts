@@ -67,7 +67,7 @@ type MCPHandlerInterface = {
 	tools: {
 		call: (payload: CallToolRequest['params']) => MaybePromise<CallToolResult | MCPError>;
 		list: (payload: ListToolsRequest['params']) => MaybePromise<ListToolsResult | MCPError>;
-		io: (payload: ListToolsRequest['params']) => MaybePromise<ListToolsResult | MCPError>;
+		// io: (payload: ListToolsRequest['params']) => MaybePromise<ListToolsResult | MCPError>;
 	};
 	ping?: (payload: PingRequest) => MaybePromise<EmptyResult | MCPError>;
 };
@@ -163,8 +163,12 @@ export class MCPHandler {
 						return mcpError('METHOD_NOT_FOUND');
 					}
 
-					const validatedPayload = await prompt['~validate'](payload.arguments);
-
+					let validatedPayload: any;
+					try {
+						validatedPayload = await prompt['~validate'](payload.arguments);
+					} catch (err) {
+						return err instanceof MCPError ? err : mcpError('INTERNAL_ERROR');
+					}
 					const result = await prompt['~call'](validatedPayload, this.sessionId);
 					if (result instanceof MCPError) {
 						return result;
@@ -297,15 +301,15 @@ export class MCPHandler {
 						tools: defineTools(this.server.tools || {}, undefined),
 					} satisfies ListToolsResult;
 				},
-				io: async (payload) => {
-					if (!this.hasTools) {
-						return mcpError('METHOD_NOT_FOUND');
-					}
-					const toolsResult = defineTools(this.server.tools || {}, true);
-					return {
-						tools: toolsResult,
-					} satisfies ListToolsOutputResult;
-				},
+				// io: async (payload) => {
+				// 	if (!this.hasTools) {
+				// 		return mcpError('METHOD_NOT_FOUND');
+				// 	}
+				// 	const toolsResult = defineTools(this.server.tools || {}, true);
+				// 	return {
+				// 		tools: toolsResult,
+				// 	} satisfies ListToolsOutputResult;
+				// },
 			},
 			ping: async (payload) => {
 				return {} satisfies EmptyResult;
