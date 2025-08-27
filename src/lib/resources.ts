@@ -43,15 +43,16 @@ export class Resource<H extends HandleResourceFunction> {
 			return [result, 'text'] as const;
 		}
 
-		const isBlob = result instanceof Blob;
-		const isArrayBuffer = result instanceof ArrayBuffer;
-		const isFile = result instanceof File;
-		const isUint8Array = result instanceof Uint8Array;
-
+		const isBlob = typeof Blob !== 'undefined' && result instanceof Blob;
+		const isArrayBuffer = typeof ArrayBuffer !== 'undefined' && result instanceof ArrayBuffer;
+		const isFile = typeof File !== 'undefined' && result instanceof File;
+		const isUint8Array = typeof Uint8Array !== 'undefined' && result instanceof Uint8Array;
 		if (isFile || isBlob || isArrayBuffer || isUint8Array) {
+			if (!this['~type']) {
+				return [error('INTERNAL_ERROR', 'Resource mimeType not set', { uri }), 'error'] as const;
+			}
 			return [await toDataUrl(result, this['~type']), 'blob'] as const;
 		}
-
 		return [error('RESOURCE_NOT_FOUND'), 'error'] as const;
 	};
 

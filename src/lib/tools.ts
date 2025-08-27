@@ -19,7 +19,7 @@ export type HandleToolFunction<Schema extends StandardSchemaV1 | undefined> = (p
 export class Tool<Schema extends StandardSchemaV1 | undefined = StandardSchemaV1 | undefined, H extends HandleToolFunction<Schema> = any> {
 	'~schema': Schema;
 	'~description': string;
-	'~output'?: StandardSchemaV1;
+	// '~output'?: StandardSchemaV1;
 	'~handler': H;
 
 	constructor(description: string) {
@@ -74,10 +74,10 @@ export class Tool<Schema extends StandardSchemaV1 | undefined = StandardSchemaV1
 		return this as unknown as Tool<SS, HandleToolFunction<SS>>;
 	};
 
-	output = (schema: StandardSchemaV1) => {
-		this['~output'] = schema;
-		return this as Tool<Schema, H>;
-	};
+	// output = (schema: StandardSchemaV1) => {
+	// 	this['~output'] = schema;
+	// 	return this as Tool<Schema, H>;
+	// };
 
 	handle = <HH extends HandleToolFunction<Schema>>(handler: HH) => {
 		this['~handler'] = handler as unknown as H;
@@ -108,19 +108,19 @@ export const defineTool = <O extends true | undefined>(
 			  } as JsonSchema.Object),
 	} as SpecTool;
 
-	if (withOutput === true) {
-		Object.assign(definition, {
-			outputSchema: tool['~output']
-				? toJsonSchema(tool['~output'])
-				: ({
-						type: 'object',
-				  } as JsonSchema.Object),
-		});
-		return definition as SpecTool & { outputSchema: JsonSchema.Object };
-	} else {
-		// @ts-ignore
-		return definition as SpecTool;
-	}
+	// if (withOutput === true) {
+	// 	Object.assign(definition, {
+	// 		outputSchema: tool['~output']
+	// 			? toJsonSchema(tool['~output'])
+	// 			: ({
+	// 					type: 'object',
+	// 			  } as JsonSchema.Object),
+	// 	});
+	// 	return definition as SpecTool & { outputSchema: JsonSchema.Object };
+	// } else {
+	// @ts-ignore
+	return definition as SpecTool;
+	// }
 };
 
 export class ToolError {

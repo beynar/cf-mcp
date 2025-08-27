@@ -262,10 +262,14 @@ export class MCPHandler {
 						return mcpError('METHOD_NOT_FOUND');
 					}
 
-					const validatedPayload = await tool['~validate'](payload.arguments);
+					let validatedPayload: any;
+					try {
+						validatedPayload = await tool['~validate'](payload.arguments);
+					} catch (err) {
+						return err instanceof MCPError ? err : mcpError('INVALID_PARAMS');
+					}
 
 					const result = await tool['~call'](validatedPayload, this.sessionId);
-
 					if (result instanceof MCPError) {
 						return result;
 					}

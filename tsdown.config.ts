@@ -3,7 +3,7 @@ import { defineConfig } from 'tsdown';
 export default defineConfig([
 	{
 		entry: ['./src/lib/index.ts'],
-		platform: 'node',
+		platform: 'neutral',
 
 		skipNodeModulesBundle: true,
 		dts: true,
@@ -11,7 +11,7 @@ export default defineConfig([
 		// minify: true,
 		external: ['cloudflare:workers'],
 		sourcemap: true,
-		format: ['esm'],
+		format: ['esm', 'cjs'],
 		treeshake: true,
 		clean: true,
 		unbundle: false,

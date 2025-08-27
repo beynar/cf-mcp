@@ -21,21 +21,21 @@
 		"cf-typegen": "wrangler types",
 		"package": "tsdown"
 	},
+	"dependencies": {
+		"@valibot/to-json-schema": "^1.3.0",
+		"arktype": "^2.1.20",
+		"valibot": "^1.1.0",
+		"zod": "^4.1.3",
+		"@types/mime-types": "^3.0.1"
+	},
 	"devDependencies": {
 		"@cloudflare/vitest-pool-workers": "^0.8.19",
 		"@cloudflare/workers-types": "^4.20250826.0",
-		"@valibot/to-json-schema": "^1.3.0",
-		"arktype": "^2.1.20",
 		"bumpp": "^10.2.3",
 		"tsdown": "^0.14.2",
 		"typescript": "^5.9.2",
-		"valibot": "^1.1.0",
 		"vitest": "~3.2.0",
-		"wrangler": "^4.33.0",
-		"zod": "^4.1.3"
-	},
-	"dependencies": {
-		"@types/mime-types": "^3.0.1"
+		"wrangler": "^4.33.0"
 	},
 	"files": [
 		"dist",
@@ -48,7 +48,7 @@
 			"import": "./dist/index.mjs"
 		}
 	},
-	"typeVersion": {
+	"typesVersions": {
 		"*": {
 			".": [
 				"./dist/index.d.ts"
